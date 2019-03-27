@@ -144,4 +144,4 @@ class SummaryOfMovies:
 
 
 
-x = SummaryOfMovies()
+movieSummary = SummaryOfMovies()
