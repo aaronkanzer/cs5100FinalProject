@@ -141,3 +141,7 @@ class SummaryOfMovies:
         print ("1M - 40M: %d" % len(self.testIntervals['40M']))
         print ("40M - 150M: %d" % len(self.testIntervals['150M']))
         print ("150M+: %d" % len(self.testIntervals['151M+']))
+
+
+
+x = SummaryOfMovies()

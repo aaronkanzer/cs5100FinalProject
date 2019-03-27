@@ -14,8 +14,3 @@ class NaiveBayes:
 
         cast = trainSet[0].getCast()
         print (cast[5])
-
-
-
-x = NaiveBayes()
-x.featureCast()
