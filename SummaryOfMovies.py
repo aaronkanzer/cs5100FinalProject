@@ -1,14 +1,19 @@
 import csv
 from MovieCSVReader import Movie
 
+
+# Reads in Movies and summarizes some data. Add more functions as needed
 class SummaryOfMovies:
 
     def __init__(self):
+        # Holds the list of all 3000 movies
         self.allMovies = []
+        # Holds the list of movies in the training set
         self.trainMovies = []
+        # Holds the list of movies in the testing set
         self.testMovies = []
 
-        # Setting up a dictionary of our intervals of revenue. Each key holds a list of movies
+        # Setting up a dictionary of our intervals of revenue for the train set. Each key holds a list of movies
         self.trainIntervals = {}
         self.trainIntervals['.5M'] = []
         self.trainIntervals['1M'] = []
@@ -16,6 +21,7 @@ class SummaryOfMovies:
         self.trainIntervals['150M'] = []
         self.trainIntervals['151M+'] = []
 
+        # Setting up a dictionary of our intervals of revenue for the test set. Each key holds a list of movies
         self.testIntervals = {}
         self.testIntervals['.5M'] = []
         self.testIntervals['1M'] = []
@@ -23,12 +29,14 @@ class SummaryOfMovies:
         self.testIntervals['150M'] = []
         self.testIntervals['151M+'] = []
 
-
+        # Process all movies and add them to self.allMovies
+        # Everything is loaded as a string. Use eval(row[x]) to create a list of dictionaries from a string.
         with open('train.csv') as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=',')
             line_count = 0
             for row in csv_reader:
                 if line_count > 0:
+                    # Creates a list of dictionaries from the string in the 'cast' row
                     if (row[20][0] == "["):
                         cast = eval(row[20])
                     else:
@@ -41,21 +49,30 @@ class SummaryOfMovies:
                 else:
                     line_count += 1
 
+        # Split list of movies into a train and test set
         self.splitData()
+        # Adds Movies in the train set into different interval bukcets
         self.countTrainSet()
+        # Adds Movies in the test set into different interval bukcets
         self.countTestSet()
+        # Prints the length of each list in trainIntervals
         self.printTrainCount()
+        # Prints the length of each list in testIntervals
         self.printTestCount()
 
+    # Returns all 3000 Movies
     def getTrainMovies(self):
         return self.trainMovies
 
+    # Returns a list of Movies from the training set
     def getTestMovies(self):
         return self.testMovies
 
+    # Returns a list of Movies from the test set
     def getAllMovies(self):
         return self.allMovies
 
+    # Returns a dictionary of intervals with a list of movies for each interval
     def getTrainIntervals(self):
         return self.trainIntervals
 
@@ -71,7 +88,7 @@ class SummaryOfMovies:
                 self.testMovies.append(self.allMovies[i])
         print('Split ' + str(len(self.allMovies)) + ' rows into train set with ' + str(len(self.trainMovies)) + ' movies and test set with ' + str(len(self.testMovies)) + ' movies')
 
-    # Adds each movie in the training set into a particular list in the trainIntervals dictionarybased on the movies revenue
+    # Adds each movie in the training set into a particular list in the trainIntervals dictionary based on the movies revenue
     def countTrainSet(self):
         for i in range(len(self.trainMovies)):
             if (self.trainMovies[i].getRevenueInterval() == .5):
@@ -89,6 +106,7 @@ class SummaryOfMovies:
             else:
                 self.trainIntervals['151M+'].append(self.trainMovies[i])
 
+    # Adds each movie in the testing set into a particular list in the testIntervals dictionary based on the movies revenue
     def countTestSet(self):
         for i in range(len(self.testMovies)):
             if (self.testMovies[i].getRevenueInterval() == .5):
@@ -115,7 +133,7 @@ class SummaryOfMovies:
         print ("40M - 150M: %d" % len(self.trainIntervals['150M']))
         print ("150M+: %d" % len(self.trainIntervals['151M+']))
 
-    # Prints the count each of our intervals for the training set
+    # Prints the count each of our intervals for the testing set
     def printTestCount(self):
         print("Processed " + str(len(self.testMovies)) + " movies for testing set")
         print ("0 - 500K: %d" % len(self.testIntervals['.5M']))
