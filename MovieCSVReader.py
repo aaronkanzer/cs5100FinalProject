@@ -68,7 +68,7 @@ class Movie:
 
     # Returns the amount of $ generated at the box office
     def getRevenue(self):
-        return self.revenue
+        return int(self.revenue)
 
     # Returns name of movie
     def getTitle(self):

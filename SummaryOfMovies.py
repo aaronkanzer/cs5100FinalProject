@@ -72,14 +72,18 @@ class SummaryOfMovies:
     def getAllMovies(self):
         return self.allMovies
 
-    # Returns a dictionary of intervals with a list of movies for each interval
+    # Returns a dictionary of train intervals with a list of movies for each interval
     def getTrainIntervals(self):
         return self.trainIntervals
+
+    # Returns a dictionary of test intervals with a list of movies for each interval
+    def getTestIntervals(self):
+        return self.testIntervals
 
     # Splits the 3000 movies into 2 groups, a training set (2000 movies) and a testing set (1000) movies
     def splitData(self):
         trainSize = len(self.allMovies) * (2.0/3.0)
-        testSize = len(self.allMovies) * (2.0/3.0)
+        testSize = len(self.allMovies) * (1.0/3.0)
 
         for i in range(len(self.allMovies)):
             if i < trainSize:
