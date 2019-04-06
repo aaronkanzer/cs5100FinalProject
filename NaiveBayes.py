@@ -265,7 +265,7 @@ class NaiveBayes:
             self.makePrediction(movie)
 
 
-        print ("Correct Predictions: {}".format(self.correctPredictions))
+        print ("\nNaive Bayes\nCorrect Predictions: {}".format(self.correctPredictions))
         print ("Total Movies Tested: {}".format(self.totalPredictions))
         print ("Percentage Correct {:.2f}%".format((self.correctPredictions / float(self.totalPredictions) * 100)))
 
