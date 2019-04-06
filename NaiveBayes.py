@@ -8,6 +8,7 @@ class NaiveBayes:
         self.castToRev = {}
         self.crewToRev = {}
         self.genres = {}
+        self.prodComp = {}
         self.popularity = {}
         self.totalProbability = [1, 1, 1, 1, 1]
         self.correctPredictions = 0
@@ -98,9 +99,9 @@ class NaiveBayes:
         trainSet = self.summaryOfMovies.getTrainMovies()
 
         for i in range(len(trainSet)):
-            crew = trainSet[i].getGenres()
+            genres = trainSet[i].getGenres()
 
-            for j in crew:
+            for j in genres:
                 if ('id' in j):
                     if (j['id'] in self.genres):
                         rev = trainSet[i].getRevenueInterval()
@@ -127,7 +128,41 @@ class NaiveBayes:
                             self.genres[j['id']][4] += 1
                         elif (rev == 151):
                             self.genres[j['id']][5] += 1
-        print self.genres
+
+    # Creates and returns a dictionary of actors and a list of their revenue [0] and total movies [1]
+    def trainFeatureProductionCompany(self):
+        trainSet = self.summaryOfMovies.getTrainMovies()
+        i = 0
+        for i in range(len(trainSet)):
+            prodComp = trainSet[i].getProdComp()
+
+            for j in prodComp:
+                if ('id' in j):
+                    if (j['id'] in self.prodComp):
+                        rev = trainSet[i].getRevenueInterval()
+                        if (rev == .5):
+                            self.prodComp[j['id']][1] += 1
+                        elif (rev == 1):
+                            self.prodComp[j['id']][2] += 1
+                        elif (rev == 40):
+                            self.prodComp[j['id']][3] += 1
+                        elif (rev == 150):
+                            self.prodComp[j['id']][4] += 1
+                        elif (rev == 151):
+                            self.prodComp[j['id']][5] += 1
+                    else:
+                        self.prodComp[j['id']] = [j['name'], 1, 1, 1, 1, 1]
+                        rev = trainSet[i].getRevenueInterval()
+                        if (rev == .5):
+                            self.prodComp[j['id']][1] += 1
+                        elif (rev == 1):
+                            self.prodComp[j['id']][2] += 1
+                        elif (rev == 40):
+                            self.prodComp[j['id']][3] += 1
+                        elif (rev == 150):
+                            self.prodComp[j['id']][4] += 1
+                        elif (rev == 151):
+                            self.prodComp[j['id']][5] += 1
 
 
 
@@ -168,6 +203,18 @@ class NaiveBayes:
                     self.totalProbability[3] = self.totalProbability[3] * (self.genres[i['id']][4] / float(sum))
                     self.totalProbability[4] = self.totalProbability[4] * (self.genres[i['id']][5] / float(sum))
 
+    def testProductionComapny(self, movie):
+        # Obtain probabilities for P(interval | crew)
+        for i in movie.getProdComp():
+            if ('id' in i):
+                if (i['id'] in self.prodComp):
+                    sum = self.prodComp[i['id']][1] + self.prodComp[i['id']][2] + self.prodComp[i['id']][3] + self.prodComp[i['id']][4] + self.prodComp[i['id']][5]
+                    self.totalProbability[0] = self.totalProbability[0] * (self.prodComp[i['id']][1] / float(sum))
+                    self.totalProbability[1] = self.totalProbability[1] * (self.prodComp[i['id']][2] / float(sum))
+                    self.totalProbability[2] = self.totalProbability[2] * (self.prodComp[i['id']][3] / float(sum))
+                    self.totalProbability[3] = self.totalProbability[3] * (self.prodComp[i['id']][4] / float(sum))
+                    self.totalProbability[4] = self.totalProbability[4] * (self.prodComp[i['id']][5] / float(sum))
+
     def makePrediction(self, movie):
         predictedRevProb = max(self.totalProbability)
         for prob in range(len(self.totalProbability)):
@@ -193,6 +240,7 @@ class NaiveBayes:
         self.trainFeatureCast()
         self.trainFeatureCrew()
         self.trainFeatureGenre()
+        self.trainFeatureProductionCompany()
 
         # Get test movies
         testMovies = self.summaryOfMovies.getTestMovies()
@@ -205,6 +253,7 @@ class NaiveBayes:
             self.testCast(movie)
             self.testCrew(movie)
             self.testGenres(movie)
+            self.testProductionComapny(movie)
             self.makePrediction(movie)
             self.totalTests += 1
 
