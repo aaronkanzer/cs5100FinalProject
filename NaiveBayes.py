@@ -4,15 +4,22 @@ from SummaryOfMovies import SummaryOfMovies
 class NaiveBayes:
 
     def __init__(self):
+        # Get the data
         self.summaryOfMovies = SummaryOfMovies()
+
+        # Variables used to calculate probabilities from training data
         self.castToRev = {}
         self.crewToRev = {}
         self.genres = {}
         self.prodComp = {}
         self.popularity = {}
+
+        # Keeps track of the total Probability for a movie for each interval
         self.totalProbability = [1, 1, 1, 1, 1]
+
+        # Values used to assess our model
         self.correctPredictions = 0
-        self.totalTests = 0
+        self.totalPredictions = 0
 
     def getCastToRev(self):
         return self.castToRev
@@ -216,6 +223,7 @@ class NaiveBayes:
                     self.totalProbability[4] = self.totalProbability[4] * (self.prodComp[i['id']][5] / float(sum))
 
     def makePrediction(self, movie):
+        self.totalPredictions += 1
         predictedRevProb = max(self.totalProbability)
         for prob in range(len(self.totalProbability)):
             if (self.totalProbability[prob] == predictedRevProb):
@@ -255,13 +263,11 @@ class NaiveBayes:
             self.testGenres(movie)
             self.testProductionComapny(movie)
             self.makePrediction(movie)
-            self.totalTests += 1
-
 
 
         print ("Correct Predictions: {}".format(self.correctPredictions))
-        print ("Total Movies Tested: {}".format(self.totalTests))
-        print ("Percentage Correct {:.2f}%".format((self.correctPredictions / float(self.totalTests) * 100)))
+        print ("Total Movies Tested: {}".format(self.totalPredictions))
+        print ("Percentage Correct {:.2f}%".format((self.correctPredictions / float(self.totalPredictions) * 100)))
 
 
 x = NaiveBayes()
