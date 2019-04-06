@@ -5,85 +5,215 @@ class NaiveBayes:
 
     def __init__(self):
         self.summaryOfMovies = SummaryOfMovies()
-        self.actorToRev = {}
+        self.castToRev = {}
+        self.crewToRev = {}
+        self.genres = {}
+        self.popularity = {}
+        self.totalProbability = [1, 1, 1, 1, 1]
+        self.correctPredictions = 0
+        self.totalTests = 0
 
-    def getActorToRev(self):
-        return self.actorToRev
+    def getCastToRev(self):
+        return self.castToRev
+
+    def budgetToRev(self):
+        return self.budgetToRev
 
     def getSummaryOfMovies(self):
         return self.summaryOfMovies
 
     # Creates and returns a dictionary of actors and a list of their revenue [0] and total movies [1]
-    def featureCast(self):
+    def trainFeatureCast(self):
         trainSet = self.summaryOfMovies.getTrainMovies()
 
         for i in range(len(trainSet)):
             cast = trainSet[i].getCast()
 
             for j in cast:
-                if ('id' in j):
-                    if (j['id'] in self.actorToRev):
+                if ('id' in j ):
+                    if (j['id'] in self.castToRev):
                         rev = trainSet[i].getRevenueInterval()
                         if (rev == .5):
-                            self.actorToRev[j['id']][1] += 1
+                            self.castToRev[j['id']][1] += 1
                         elif (rev == 1):
-                            self.actorToRev[j['id']][2] += 1
+                            self.castToRev[j['id']][2] += 1
                         elif (rev == 40):
-                            self.actorToRev[j['id']][3] += 1
+                            self.castToRev[j['id']][3] += 1
                         elif (rev == 150):
-                            self.actorToRev[j['id']][4] += 1
+                            self.castToRev[j['id']][4] += 1
                         elif (rev == 151):
-                            self.actorToRev[j['id']][5] += 1
+                            self.castToRev[j['id']][5] += 1
                     else:
-                        self.actorToRev[j['id']] = [j['name'],0, 0, 0, 0, 0]
+                        self.castToRev[j['id']] = [j['name'], 1, 1, 1, 1, 1]
                         rev = trainSet[i].getRevenueInterval()
                         if (rev == .5):
-                            self.actorToRev[j['id']][1] += 1
+                            self.castToRev[j['id']][1] += 1
                         elif (rev == 1):
-                            self.actorToRev[j['id']][2] += 1
+                            self.castToRev[j['id']][2] += 1
                         elif (rev == 40):
-                            self.actorToRev[j['id']][3] += 1
+                            self.castToRev[j['id']][3] += 1
                         elif (rev == 150):
-                            self.actorToRev[j['id']][4] += 1
+                            self.castToRev[j['id']][4] += 1
                         elif (rev == 151):
-                            self.actorToRev[j['id']][5] += 1
+                            self.castToRev[j['id']][5] += 1
 
-        # for key, value in actorToRev.iteritems():
-        #     print(str(key) + ": \t\t\t\t" + '${:,.2f}'.format(float(value[0])/float(value[1])) + "\t\t\t\t" + str(value[1]))
-        # print ("John Wayne: \t\t\t\t" + str(float(actorToRev['John Wayne'][0])/float(actorToRev['John Wayne'][1])) + "\t\t" + str(float(actorToRev['John Wayne'][1])))
+    # Creates and returns a dictionary of actors and a list of their revenue [0] and total movies [1]
+    def trainFeatureCrew(self):
+        trainSet = self.summaryOfMovies.getTrainMovies()
 
+        for i in range(len(trainSet)):
+            crew = trainSet[i].getCrew()
+
+            for j in crew:
+                if ('id' in j):
+                    if (j['id'] in self.crewToRev and (j['job'] == "Director" or j['job'] == "Executive Producer" or j['job'] == "Producer" or j['job'] == 'Writer')):
+                        rev = trainSet[i].getRevenueInterval()
+                        if (rev == .5):
+                            self.crewToRev[j['id']][1] += 1
+                        elif (rev == 1):
+                            self.crewToRev[j['id']][2] += 1
+                        elif (rev == 40):
+                            self.crewToRev[j['id']][3] += 1
+                        elif (rev == 150):
+                            self.crewToRev[j['id']][4] += 1
+                        elif (rev == 151):
+                            self.crewToRev[j['id']][5] += 1
+                    else:
+                        self.crewToRev[j['id']] = [j['name'], 1, 1, 1, 1, 1]
+                        rev = trainSet[i].getRevenueInterval()
+                        if (rev == .5):
+                            self.crewToRev[j['id']][1] += 1
+                        elif (rev == 1):
+                            self.crewToRev[j['id']][2] += 1
+                        elif (rev == 40):
+                            self.crewToRev[j['id']][3] += 1
+                        elif (rev == 150):
+                            self.crewToRev[j['id']][4] += 1
+                        elif (rev == 151):
+                            self.crewToRev[j['id']][5] += 1
+
+
+    # Creates and returns a dictionary of actors and a list of their revenue [0] and total movies [1]
+    def trainFeatureGenre(self):
+        trainSet = self.summaryOfMovies.getTrainMovies()
+
+        for i in range(len(trainSet)):
+            crew = trainSet[i].getGenres()
+
+            for j in crew:
+                if ('id' in j):
+                    if (j['id'] in self.genres):
+                        rev = trainSet[i].getRevenueInterval()
+                        if (rev == .5):
+                            self.genres[j['id']][1] += 1
+                        elif (rev == 1):
+                            self.genres[j['id']][2] += 1
+                        elif (rev == 40):
+                            self.genres[j['id']][3] += 1
+                        elif (rev == 150):
+                            self.genres[j['id']][4] += 1
+                        elif (rev == 151):
+                            self.genres[j['id']][5] += 1
+                    else:
+                        self.genres[j['id']] = [j['name'], 1, 1, 1, 1, 1]
+                        rev = trainSet[i].getRevenueInterval()
+                        if (rev == .5):
+                            self.genres[j['id']][1] += 1
+                        elif (rev == 1):
+                            self.genres[j['id']][2] += 1
+                        elif (rev == 40):
+                            self.genres[j['id']][3] += 1
+                        elif (rev == 150):
+                            self.genres[j['id']][4] += 1
+                        elif (rev == 151):
+                            self.genres[j['id']][5] += 1
+        print self.genres
+
+
+
+    def testCast(self, movie):
+        # Obtain probabilities for P(interval | cast)
+        for i in movie.getCast():
+            if ('id' in i):
+                if (i['id'] in self.castToRev):
+                    sum = self.castToRev[i['id']][1] + self.castToRev[i['id']][2] + self.castToRev[i['id']][3] + self.castToRev[i['id']][4] + self.castToRev[i['id']][5]
+                    self.totalProbability[0] = self.totalProbability[0] * (self.castToRev[i['id']][1] / float(sum))
+                    self.totalProbability[1] = self.totalProbability[1] * (self.castToRev[i['id']][2] / float(sum))
+                    self.totalProbability[2] = self.totalProbability[2] * (self.castToRev[i['id']][3] / float(sum))
+                    self.totalProbability[3] = self.totalProbability[3] * (self.castToRev[i['id']][4] / float(sum))
+                    self.totalProbability[4] = self.totalProbability[4] * (self.castToRev[i['id']][5] / float(sum))
+
+    def testCrew(self, movie):
+        # Obtain probabilities for P(interval | crew)
+        for i in movie.getCrew():
+            if ('id' in i):
+                if (i['id'] in self.crewToRev):
+                    sum = self.crewToRev[i['id']][1] + self.crewToRev[i['id']][2] + self.crewToRev[i['id']][3] + self.crewToRev[i['id']][4] + self.crewToRev[i['id']][5]
+                    self.totalProbability[0] = self.totalProbability[0] * (self.crewToRev[i['id']][1] / float(sum))
+                    self.totalProbability[1] = self.totalProbability[1] * (self.crewToRev[i['id']][2] / float(sum))
+                    self.totalProbability[2] = self.totalProbability[2] * (self.crewToRev[i['id']][3] / float(sum))
+                    self.totalProbability[3] = self.totalProbability[3] * (self.crewToRev[i['id']][4] / float(sum))
+                    self.totalProbability[4] = self.totalProbability[4] * (self.crewToRev[i['id']][5] / float(sum))
+
+
+    def testGenres(self, movie):
+        # Obtain probabilities for P(interval | crew)
+        for i in movie.getGenres():
+            if ('id' in i):
+                if (i['id'] in self.genres):
+                    sum = self.genres[i['id']][1] + self.genres[i['id']][2] + self.genres[i['id']][3] + self.genres[i['id']][4] + self.genres[i['id']][5]
+                    self.totalProbability[0] = self.totalProbability[0] * (self.genres[i['id']][1] / float(sum))
+                    self.totalProbability[1] = self.totalProbability[1] * (self.genres[i['id']][2] / float(sum))
+                    self.totalProbability[2] = self.totalProbability[2] * (self.genres[i['id']][3] / float(sum))
+                    self.totalProbability[3] = self.totalProbability[3] * (self.genres[i['id']][4] / float(sum))
+                    self.totalProbability[4] = self.totalProbability[4] * (self.genres[i['id']][5] / float(sum))
+
+    def makePrediction(self, movie):
+        predictedRevProb = max(self.totalProbability)
+        for prob in range(len(self.totalProbability)):
+            if (self.totalProbability[prob] == predictedRevProb):
+                predictedInterval = prob
+
+        actualRev = movie.getRevenueInterval()
+        if (actualRev == .5 and predictedInterval == 0):
+            self.correctPredictions += 1
+        elif (actualRev == 1 and predictedInterval == 1):
+            self.correctPredictions += 1
+        elif (actualRev == 40 and predictedInterval == 2):
+            self.correctPredictions += 1
+        elif (actualRev == 150 and predictedInterval == 3):
+            self.correctPredictions += 1
+        elif (actualRev == 151 and predictedInterval == 4):
+            self.correctPredictions += 1
 
 
     # Takes a list of dictionaries of cast members
-    def model(self, cast):
-        intervalCounts = [0, 0, 0, 0, 0]
+    def runTestData(self):
+        # Train the model
+        self.trainFeatureCast()
+        self.trainFeatureCrew()
+        self.trainFeatureGenre()
 
-        totalCount = 0
+        # Get test movies
+        testMovies = self.summaryOfMovies.getTestMovies()
+        totalTests = len(testMovies)
+        correctPredictions = 0
 
-        for i in cast:
-            if (i['id'] in self.actorToRev):
-                intervalCounts[0] += self.actorToRev[i['id']][1]
-                intervalCounts[1] += self.actorToRev[i['id']][2]
-                intervalCounts[2] += self.actorToRev[i['id']][3]
-                intervalCounts[3] += self.actorToRev[i['id']][4]
-                intervalCounts[4] += self.actorToRev[i['id']][5]
-
-        sum = intervalCounts[0] + intervalCounts[1] + intervalCounts[2] + intervalCounts[3] + intervalCounts[4]
-        probability = [0, 0, 0, 0 , 0]
-        probability[0] = intervalCounts[0] / float(sum)
-        probability[1] = intervalCounts[1] / float(sum)
-        probability[2] = intervalCounts[2] / float(sum)
-        probability[3] = intervalCounts[3] / float(sum)
-        probability[4] = intervalCounts[4] / float(sum)
-
-        print (probability)
-        print (intervalCounts)
+        for movie in testMovies:
+            self.totalProbability = [1, 1, 1, 1, 1]
+            # Obtain probabilities for P(interval | cast)
+            self.testCast(movie)
+            self.testCrew(movie)
+            self.testGenres(movie)
+            self.makePrediction(movie)
+            self.totalTests += 1
 
 
 
+        print ("Correct Predictions: {}".format(self.correctPredictions))
+        print ("Total Movies Tested: {}".format(self.totalTests))
+        print ("Percentage Correct {:.2f}%".format((self.correctPredictions / float(self.totalTests) * 100)))
 
 
 x = NaiveBayes()
-x.featureCast()
-x.model(x.getSummaryOfMovies().getTestMovies()[4].getCast())
-print (x.getSummaryOfMovies().getTestMovies()[4].getTitle())
+x.runTestData()

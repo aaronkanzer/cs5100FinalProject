@@ -41,8 +41,17 @@ class SummaryOfMovies:
                         cast = eval(row[20])
                     else:
                         cast = [{}]
-                    newMovie = Movie(row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],
-                    row[11],row[12],row[13],row[14],row[15],row[16],row[17],row[18],row[19],cast,row[21],row[22])
+                    # Creates a list of dictionaries from the string in the 'crew' row
+                    if (row[21] is not '' and row[21][0] == "["):
+                        crew = eval(row[21])
+                    else:
+                        crew = [{}]
+                    if (row[3] is not '' and row[3][0] == "["):
+                        genres = eval(row[3])
+                    else:
+                        genres = [{}]
+                    newMovie = Movie(row[0],row[1],row[2],genres,row[4],row[5],row[6],row[7],row[8],row[9],row[10],
+                    row[11],row[12],row[13],row[14],row[15],row[16],row[17],row[18],row[19],cast,crew,row[22])
                     #print("Training Movie added: " + newMovie.getTitle())
                     #print (newMovie.getCast())
                     self.allMovies.append(newMovie)
@@ -56,9 +65,9 @@ class SummaryOfMovies:
         # Adds Movies in the test set into different interval bukcets
         self.countTestSet()
         # Prints the length of each list in trainIntervals
-        self.printTrainCount()
-        # Prints the length of each list in testIntervals
-        self.printTestCount()
+        # self.printTrainCount()
+        # # Prints the length of each list in testIntervals
+        # self.printTestCount()
 
     # Returns all 3000 Movies
     def getTrainMovies(self):
@@ -90,7 +99,7 @@ class SummaryOfMovies:
                 self.trainMovies.append(self.allMovies[i])
             else:
                 self.testMovies.append(self.allMovies[i])
-        print('Split ' + str(len(self.allMovies)) + ' rows into train set with ' + str(len(self.trainMovies)) + ' movies and test set with ' + str(len(self.testMovies)) + ' movies')
+        # print('Split ' + str(len(self.allMovies)) + ' rows into train set with ' + str(len(self.trainMovies)) + ' movies and test set with ' + str(len(self.testMovies)) + ' movies')
 
     # Adds each movie in the training set into a particular list in the trainIntervals dictionary based on the movies revenue
     def countTrainSet(self):
@@ -145,7 +154,3 @@ class SummaryOfMovies:
         print ("1M - 40M: %d" % len(self.testIntervals['40M']))
         print ("40M - 150M: %d" % len(self.testIntervals['150M']))
         print ("150M+: %d" % len(self.testIntervals['151M+']))
-
-
-
-movieSummary = SummaryOfMovies()
