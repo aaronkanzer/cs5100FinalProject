@@ -54,8 +54,12 @@ class SummaryOfMovies:
                         prodComps = eval(row[11])
                     else:
                         prodComps = [{}]
+                    if (row[19] is not '' and row[19][0] == "["):
+                        keywords = eval(row[19])
+                    else:
+                        keywords = [{}]
                     newMovie = Movie(row[0],row[1],row[2],genres,row[4],row[5],row[6],row[7],row[8],row[9],row[10],
-                    prodComps,row[12],row[13],row[14],row[15],row[16],row[17],row[18],row[19],cast,crew,row[22])
+                    prodComps,row[12],row[13],row[14],row[15],row[16],row[17],row[18],keywords,cast,crew,row[22])
                     #print("Training Movie added: " + newMovie.getTitle())
                     #print (newMovie.getCast())
                     self.allMovies.append(newMovie)

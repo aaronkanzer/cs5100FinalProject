@@ -32,7 +32,7 @@ class Movie:
 
     # Returns float -- unsure what numbers equate to
     def getPopularity(self):
-        return self.popularity
+        return int(float(self.popularity))
 
     # Returns dictionary / list of companies
     def getProdComp(self):
@@ -48,7 +48,12 @@ class Movie:
 
     # Returns integer (number of minutes)
     def getRuntime(self):
-        return self.movieRuntime
+        if (self.movieRuntime != ''):
+            return int(self.movieRuntime)
+        else:
+            return ''
+        
+
 
     # Returns dictionary / list of languages that the movie is in
     def getLanguages(self):
