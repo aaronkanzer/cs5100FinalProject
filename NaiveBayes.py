@@ -39,7 +39,7 @@ class NaiveBayes:
         trainSet = self.summaryOfMovies.getTrainMovies()
 
         for i in range(len(trainSet)):
-            cast = trainSet[i].getCast
+            cast = trainSet[i].getCast()
 
             for j in cast:
                 if ('id' in j ):
